@@ -1,17 +1,23 @@
 import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import accuracy_score
 import pickle
 import os
 
-print("Starting training script...")
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import StandardScaler
+from sklearn.pipeline import Pipeline
+from sklearn.metrics import accuracy_score, classification_report
+
+print("Starting improved training pipeline...")
 
 # Load dataset
 data_path = os.path.join("data", "students.csv")
 df = pd.read_csv(data_path)
 
-print("Dataset loaded")
+# Basic validation
+required_columns = {"study_hours", "attendance", "previous_score", "pass"}
+if not required_columns.issubset(df.columns):
+    raise ValueError("Dataset missing required columns")
 
 # Features and target
 X = df.drop("pass", axis=1)
@@ -19,22 +25,30 @@ y = df["pass"]
 
 # Train-test split
 X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.2, random_state=42
+    X, y, test_size=0.2, random_state=42, stratify=y
 )
 
-# Train model
-model = LogisticRegression()
-model.fit(X_train, y_train)
+# ML pipeline (scaling + model)
+pipeline = Pipeline([
+    ("scaler", StandardScaler()),
+    ("model", LogisticRegression(max_iter=1000))
+])
+
+# Train
+pipeline.fit(X_train, y_train)
 
 # Evaluate
-y_pred = model.predict(X_test)
-accuracy = accuracy_score(y_test, y_pred)
+y_pred = pipeline.predict(X_test)
 
+accuracy = accuracy_score(y_test, y_pred)
 print(f"Accuracy: {accuracy:.2f}")
 
-# Save model
+print("\nClassification Report:")
+print(classification_report(y_test, y_pred))
+
+# Save pipeline (scaler + model together)
 model_path = os.path.join("model", "model.pkl")
 with open(model_path, "wb") as f:
-    pickle.dump(model, f)
+    pickle.dump(pipeline, f)
 
-print("Model saved successfully")
+print("Improved model saved successfully")
