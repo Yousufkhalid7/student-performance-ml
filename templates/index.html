@@ -13,13 +13,13 @@
         <p class="subtitle">Enter the following details to predict whether the student will pass or fail</p>
         <form action="/predict" method="post">
             <label>Study Hours (per day)</label>
-            <input type="number" name="study_hours" required step="any">
+            <input type="number" name="study_hours" required step="any" min="0" max="24">
 
             <label>Attendance(%)</label>
-            <input type="number" name="attendance" required step="any">
+            <input type="number" name="attendance" required step="any" min="0" max="100">
 
             <label">Previous Score</label>
-            <input type="number" name="previous_score" required step="any">
+            <input type="number" name="previous_score" required step="any" min="0" max="100">
 
             <button type="submit">Predict</button>
         </form>
@@ -27,7 +27,7 @@
             <div class="result">
                 {{ prediction_text }}
             </div>
-        {% end_if %}
+        {% endif %}
     </div>
 </body>
 </html>
