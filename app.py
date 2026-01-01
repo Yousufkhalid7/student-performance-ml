@@ -21,14 +21,14 @@ def predict():
         attendance = float(request.form["attendance"])
         previous_score = float(request.form["previous_score"])
 
-	if study_hours < 0 or study_hours > 24:
-		raise ValueError("Study hours must be between 0 and 24")
+        if study_hours < 0 or study_hours > 24:
+            raise ValueError("Study hours must be between 0 and 24")
 
-	if attendance < 0 or attendance > 100:
-		raise ValueError("Attendance must be between 0 and 100")
+        if attendance < 0 or attendance > 100:
+            raise ValueError("Attendance must be between 0 and 100")
 
-	if previous_score < 0 or previous_score > 100:
-		raise ValueError("Previous score must be between 0 and 100")
+        if previous_score < 0 or previous_score > 100:
+            raise ValueError("Previous score must be between 0 and 100")
 
         features = np.array([[study_hours, attendance, previous_score]])
         prediction = model.predict(features)[0]
@@ -41,10 +41,10 @@ def predict():
         )
 	
     except ValueError as ve:
-	return render_template(
-		"index.html",
-		prediction_text=f"Input error: {str(ve)}"
-	    
+	    return render_template(
+		    "index.html",
+		    prediction_text=f"Input error: {str(ve)}"
+        )
 	
     except Exception as e:
         return render_template(
